@@ -16,10 +16,14 @@ for cartpole, I have, working :
 
 - *cartpole1_DQN*. demonstrate the use of a **DQN version of Qlearning**. It is also based on some code found somewhere (shame on me) but really heavily modified to make it work. The DQN has 2 models (1 target), and uses memory and replay.
 
-I'm still working on some files :
 - *cartpole1_critic* : still a **DQN**, based on based on [L4Project video on the subject (actor vs critic)](https://www.youtube.com/watch?v=LtRAgxRb5eQ)
+Start with this one, since it is very fast ! (much more than the previous)
+Fast and efficient
 
 - *cartpole1_actor* : A **policy gradient** method , based on based on [L4Project video on the subject (actor vs critic)](https://www.youtube.com/watch?v=LtRAgxRb5eQ)
+Very fast and efficient but some learnings are unstable
+
+I'm still working on some files :
 
 - *cartpole1_actor_critic* will be my next target : **actor critic method**, and based on [L4Project video on the subject](https://www.youtube.com/watch?v=1okjkEMP79c&t=217s)
 
