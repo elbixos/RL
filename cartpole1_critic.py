@@ -1,11 +1,10 @@
-import gym
+import gymnasium as gym
 import tensorflow as tf
 from tensorflow.keras import models, layers
 import numpy as np
 import os
 
-env=gym.make("CartPole-v0")
-env._max_episode_steps=200
+env=gym.make("CartPole-v1")
 nbr_action=2
 
 prefix_log_file="log_critic_"
@@ -24,7 +23,7 @@ end_epsilon=max_episode
 epsilon_decay_value=epsilon/(end_epsilon-start_epsilon)
 
 def model():
-  entree=layers.Input(shape=(4), dtype='float32')
+  entree=layers.Input(shape=(4,), dtype='float32')
   result=layers.Dense(32, activation='relu')(entree)
   result=layers.Dense(32, activation='relu')(result)
   sortie=layers.Dense(nbr_action)(result)
@@ -64,7 +63,7 @@ def train(debug=False):
     tab_next_observations=[]
     tab_done=[]
 
-    observations=env.reset()
+    observations=env.reset()[0]
     score=0
     while True:
       tab_observations.append(observations)
@@ -73,7 +72,13 @@ def train(debug=False):
         action=int(tf.argmax(valeurs_q[0], axis=-1))
       else:
         action=np.random.randint(0, nbr_action)
-      observations, reward, done, info=env.step(action)
+      
+      # added truncated for cartpole v1
+      observations, reward, done, truncated, info=env.step(action)
+
+      # and added this to use it
+      done = tf.logical_or(done,truncated)
+
       score+=reward
       tab_actions.append(action)
       tab_next_observations.append(observations)
@@ -89,7 +94,9 @@ def train(debug=False):
     tab_next_observations=np.array(tab_next_observations, dtype=np.float32)
     tab_done=np.array(tab_done, dtype=np.float32)
     train_step(tab_rewards, tab_actions, tab_observations, tab_next_observations, tab_done)
-    train_loss.reset_states()
+    
+    # beware reset_states became reset_state from tf 2.5
+    train_loss.reset_state()
 
     epsilon-=epsilon_decay_value
     epsilon=max(epsilon, epsilon_min)
@@ -110,5 +117,5 @@ train_loss=tf.keras.metrics.Mean()
 tab_s=[]
 
 train()
-
+model.save("model_critic.keras")
 fichier_log.close()
