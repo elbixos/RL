@@ -1,3 +1,7 @@
+# for some images and stuff generated during tests
+*.keras
+viz*.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
