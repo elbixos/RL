@@ -1,11 +1,10 @@
-import gym
+import gymnasium as gym
 import tensorflow as tf
 from tensorflow.keras import models, layers
 import numpy as np
 import os
 
-env=gym.make("CartPole-v0")
-env._max_episode_steps=200
+env=gym.make("CartPole-v1")
 nbr_actions=2
 gamma=0.99
 max_episode=600
@@ -18,7 +17,7 @@ fichier_log=open(prefix_log_file+str(id_file)+".csv", "w")
 print("Création du fichier de log", prefix_log_file+str(id_file)+".csv")
 
 def model(nbr_inputs, nbr_hidden, nbr_actions):
-  entree=layers.Input(shape=(nbr_inputs), dtype='float32')
+  entree=layers.Input(shape=(nbr_inputs,), dtype='float32')
   result=layers.Dense(32, activation='relu')(entree)
   result=layers.Dense(32, activation='relu')(result)
   sortie=layers.Dense(nbr_actions, activation='softmax')(result)
@@ -47,13 +46,19 @@ def train():
     tab_rewards=[]
     tab_prob_actions=[]
 
-    observations=env.reset()
+    observations=env.reset()[0]
     with tf.GradientTape() as tape:
         while True:
                 action_probs=my_model(np.expand_dims(observations, axis=0))
                 action=np.random.choice(nbr_actions, p=np.squeeze(action_probs))
                 tab_prob_actions.append(action_probs[0, action])
-                observations, reward, done, info=env.step(action)
+
+                # added truncated for cartpole v1
+                observations, reward, done, truncated, info=env.step(action)
+
+                # and added this to use it
+                done = tf.logical_or(done,truncated)
+
                 tab_rewards.append(reward)
                 if done:
                     break
@@ -79,5 +84,6 @@ my_model=model(4, 32, nbr_actions)
 optimizer=tf.keras.optimizers.Adam(learning_rate=1E-2)
 
 train()
-
+my_model.save("model_actor.keras")
 fichier_log.close()
+
