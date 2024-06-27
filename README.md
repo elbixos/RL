@@ -12,10 +12,15 @@ to work.
 
 for cartpole, I have, working :
 
-- *cartpole1_Qlearning_tabular*. demonstrate the use of Qlearning in a tabular version. It was my first attempt. It is based on some code found somewhere (shame on me) but slightly modified to make it work.
+- *cartpole1_Qlearning_tabular*. demonstrate the use of **Qlearning in a tabular version**. It was my first attempt. It is based on some code found somewhere (shame on me) but slightly modified to make it work.
 
-- *cartpole1_DQN*. demonstrate the use of a DQN version of Qlearning. It is also based on some code found somewhere (shame on me) but really heavily modified to make it work. The DQN has 2 models (1 target), and uses memory and replay.
+- *cartpole1_DQN*. demonstrate the use of a **DQN version of Qlearning**. It is also based on some code found somewhere (shame on me) but really heavily modified to make it work. The DQN has 2 models (1 target), and uses memory and replay.
 
-- *cartpole1_actor_critic* will be my next target, and based on [L4Project video on the subject](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbmJ6NVR3NExuUkNRV21VNUlISXdxbGxxM2dPUXxBQ3Jtc0ttU2oyVTEwMU0yYmxvTWNRRTBjbHMtOGFSWjhIS3QtMWVZd0dyb0hPVTR4WmVrcUtVYmh2LWJaRVZSTlp2ZVI4dmlFdTVFeXRjQkExd2twTnpsSHlfUW50YVJndDFQRW5ubVdpSTVIOG54SkU1X0FmTQ&q=https%3A%2F%2Fgithub.com%2FL42Project%2FTutoriels%2Ftree%2Fmaster%2FDivers%2Frenforcement6&v=1okjkEMP79c)
+I'm still working on some files :
+- *cartpole1_critic* : still a **DQN**, based on based on [L4Project video on the subject (actor vs critic)](https://www.youtube.com/watch?v=LtRAgxRb5eQ)
+
+- *cartpole1_actor* : A **policy gradient** method , based on based on [L4Project video on the subject (actor vs critic)](https://www.youtube.com/watch?v=LtRAgxRb5eQ)
+
+- *cartpole1_actor_critic* will be my next target : **actor critic method**, and based on [L4Project video on the subject](https://www.youtube.com/watch?v=1okjkEMP79c&t=217s)
 
 Globally, L4Project is a very good source of information in french, for reinforcement learning

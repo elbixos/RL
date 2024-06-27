@@ -282,4 +282,4 @@ class DQNAgent:
 dqn = DQNAgent(episodes = 1000,render=True)
 #dqn.training()
 
-dqn.test("qpol_model.keras",test_episodes = 10)
+dqn.test("qpol_model900.keras",test_episodes = 10)
