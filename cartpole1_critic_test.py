@@ -1,6 +1,5 @@
 import gymnasium as gym
 import tensorflow as tf
-from tensorflow.keras import models, layers
 import numpy as np
 import os
 import tqdm
@@ -13,7 +12,9 @@ my_model = tf.keras.models.load_model('model_critic.keras')
 test_episodes = 10
 reward = []
 epsilon = 0.05
-p_danger = 0.10
+
+# during test, we will pertub the optimal policy every i_danger iteration
+i_danger = 10
 
 for i in tqdm.tqdm(range(1, test_episodes+1), ascii = True, unit = 'episode'):
     ep_reward = 0
@@ -21,7 +22,7 @@ for i in tqdm.tqdm(range(1, test_episodes+1), ascii = True, unit = 'episode'):
     #print(s)
     done = False
     
-
+    step=0
     while done != True:
         s = s.reshape(1,state_size)
         '''
@@ -33,8 +34,8 @@ for i in tqdm.tqdm(range(1, test_episodes+1), ascii = True, unit = 'episode'):
         valeurs_q=my_model(s)
         action=int(tf.argmax(valeurs_q[0], axis=-1))
 
-        # add a probability of opposite action...
-        if np.random.random() < p_danger:
+        # for some steps, we take the opposite action...
+        if step%i_danger == 0:
             action = not(action)
 
         s_, r, done, truncated , info = env.step(action)
@@ -42,7 +43,9 @@ for i in tqdm.tqdm(range(1, test_episodes+1), ascii = True, unit = 'episode'):
 
         s = s_
         ep_reward += r
+        step += 1
 
+    print("end of episode", i,"cumulated reward", ep_reward)
     reward.append(ep_reward)
 
 print("max  reward",np.max(reward))

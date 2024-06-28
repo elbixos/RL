@@ -88,6 +88,9 @@ def train(debug=False):
         break
       tab_rewards.append(reward)
 
+    # added this to use truncated or done
+    done = tf.logical_or(done,truncated)
+
     tab_rewards=np.array(tab_rewards, dtype=np.float32)
     tab_actions=np.array(tab_actions, dtype=np.int32)
     tab_observations=np.array(tab_observations, dtype=np.float32)
