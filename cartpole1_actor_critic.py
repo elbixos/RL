@@ -1,14 +1,14 @@
-import gym
+import gymnasium as gym
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 import os
 
-gamma=0.99
+gamma=0.98
 max_steps_per_episode=10000
-env=gym.make("CartPole-v0")
-env._max_episode_steps=200
+env=gym.make("CartPole-v1")
+#env._max_episode_steps=200
 
 prefix_log_file="log_actor_critic_dsum_"
 id_file=0
@@ -36,9 +36,9 @@ def calcul_discount_rate(rewards_history, gamma, normalize=False):
     return result
 
 def my_model(nbr_inputs, nbr_hidden, nbr_actions):
-    entree=layers.Input(shape=(nbr_inputs), dtype='float32')
-
+    entree=layers.Input(shape=(nbr_inputs,), dtype='float32')
     common=layers.Dense(nbr_hidden, activation="relu")(entree)
+    #common=layers.Dense(nbr_hidden, activation="relu")(common)
     action=layers.Dense(nbr_actions, activation="softmax")(common)
     critic=layers.Dense(1)(common)
 
@@ -58,7 +58,7 @@ while True:
     critic_value_history=[]
     rewards_history=[]
 
-    state=env.reset()
+    state=env.reset()[0]
     episode_reward=0
     with tf.GradientTape() as tape:
 
@@ -68,7 +68,8 @@ while True:
             critic_value_history.append(critic_value[0, 0])
             action=np.random.choice(nbr_actions, p=np.squeeze(action_probs))
             action_probs_history.append(action_probs[0, action])
-            state, reward, done, infos=env.step(action)
+            state, reward, done, truncated, infos=env.step(action)
+            done = tf.logical_or(done,truncated)
             rewards_history.append(reward)
             episode_reward+=reward
             if done:
@@ -81,7 +82,7 @@ while True:
         critic_losses=[]
         for action_prob, critic_value, discount_rate in history:
             actor_losses.append(-tf.math.log(action_prob)*(discount_rate-critic_value))
-            critic_losses.append(huber_loss([critic_value], [discount_rate]))
+            critic_losses.append(huber_loss(np.expand_dims(critic_value, axis=0), np.expand_dims(discount_rate, axis=0)))
 
         loss_value=tf.reduce_mean(actor_losses+critic_losses)
         grads=tape.gradient(loss_value, model.trainable_variables)
@@ -100,4 +101,4 @@ while True:
         break
 
 fichier_log.close()
-model.save("my_model")
+model.save("model_actor_critic.keras")
