@@ -2,9 +2,18 @@
 
 some tests about **Reinforcement Learning**.
 
+## Bibliography and sources
+I found some materials to understand RL, marked here as a starting point.
+
+- some videos in French from this channel : [L4Project video on the subject (actor vs critic)](https://www.youtube.com/watch?v=LtRAgxRb5eQ)
+- [key concepts](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html)
+- a nice [taxonomy of RL technics](https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html#a-taxonomy-of-rl-algorithms)
+
+## Experiments
+
 I, for now, just used the *Gymnasium package* to get environnements.
 
-## Cartpole Environment
+### Cartpole Environment
 
 My firt attempts were with *cartpole v1* which is continuous.
 Many of the code that I found was using cartpole v0 and it needs some adjustments
