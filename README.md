@@ -3,11 +3,13 @@
 some tests about **Reinforcement Learning**.
 
 ## Bibliography and sources
-I found some materials to understand RL, marked here as a starting point.
+I found some materials to understand RL, marked here some sort of bibliography.
+It needs a bit of time to get used to notations, so feel free to look at some vulgarisation explanations before...
 
 - some videos in French from this channel : [L4Project video on the subject (actor vs critic)](https://www.youtube.com/watch?v=LtRAgxRb5eQ)
 - [key concepts](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html)
 - a nice [taxonomy of RL technics](https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html#a-taxonomy-of-rl-algorithms)
+- a long description of the [details between different technics](https://lilianweng.github.io/posts/2018-02-19-rl-overview/)
 
 ## Experiments
 
