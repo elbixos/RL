@@ -11,6 +11,8 @@ It needs a bit of time to get used to notations, so feel free to look at some vu
 - a nice [taxonomy of RL technics](https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html#a-taxonomy-of-rl-algorithms)
 - a long description of the [details between different technics](https://lilianweng.github.io/posts/2018-02-19-rl-overview/)
 
+- a french lesson about RL from [CNRS Fidle](https://www.youtube.com/watch?v=8gakDXPHC8c)
+
 ## Experiments
 
 I, for now, just used the *Gymnasium package* to get environnements.
