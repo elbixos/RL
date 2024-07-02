@@ -45,9 +45,10 @@ def my_model(nbr_inputs, nbr_hidden, nbr_actions):
     return model
 
 
-model=my_model(nbr_inputs, 32, nbr_actions)
+model=my_model(nbr_inputs, 128, nbr_actions)
 
-optimizer=keras.optimizers.Adam(learning_rate=5e-4)
+optimizer=keras.optimizers.Adam(learning_rate=1e-4)
+#optimizer=keras.optimizers.Adam()
 huber_loss=keras.losses.Huber()
 
 m_reward=0
@@ -111,7 +112,7 @@ for episode in range(max_episode):
         print("saved...",best_score)
 
 
-    message="Episode {:04d}  score:{:6.1f}  MPE: {:6.1f} Average score :{:6.1f} Best score :{6.1f}"
+    message="Episode {:04d}  score:{:6.1f}  MPE: {:6.1f} Average score :{:6.1f} Best score :{:6.1f}"
     print(message.format(episode, episode_reward, m_reward, avg_score,best_score))
     #print(optimizer.learning_rate)
 
