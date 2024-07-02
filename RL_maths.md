@@ -1,37 +1,139 @@
 # RL Maths
 
 Une compilation de ce que j'ai compris des maths en RL.
+Les notations viennent d'un [cours de l'UCL/Deep Mind]
+(https://www.youtube.com/watch?v=TCCjZe0y4Qc&list=PLqYmG7hTraZDVH599EItlEWsUOsJbAodm)
 
 ## quelques définitions
 
 pour poser le problème, on considère que notre **agent** évolue dans un **environnement**, par le biais d'**actions**.
-A un instant donné, l'agent est considéré comme étant dans un certain **état**.
+A un instant donné, l'agent est considéré comme étant dans un certain **état**,
+et percevant de cet environnement une **observation** (les deux sont assez similaires)
 
+On définit :
+- $s_t$ : un état à l'instant $t$.
+- $A_t$ : la variable aléatoire représentant l'ensemble des actions possible, dont $a_t$ est une réalisation
 
-on définit :
-- $a$ : une action possible
-- $s$ : un état.
+Par exemple, dans un monde déterministe, une action $a_t$ appliquée à un état $s_t$
+va conduire à l'état $s_{t+1}$.
 
-
-par exemple, dans un monde déterministe, une action $a$ appliquée à un état $s$
-va conduire à l'état $s'$.
-
-l'environnement attribue à l'agent une certaine **récompense** instantanée
+L'environnement attribue à l'agent une certaine **récompense** instantanée
 lorsque l'agent, dans un état donnée choisit telle action qui le conduit dans tel autre état.
 
 - $r$ : la récompense associée au passage d'un état à un autre par le biais d'une action. Il s'agit d'une récompense instantannée.
 
-Il s'agit donc de choisir, à partir d'un état initial, une série d'actions permettant d'obtenir une récompense cumulée maximale.
+Pour préciser la notation  temporelle de toute ces grandeurs : A l'instant $t$t, l'agent se situe dans un état $s_t$. Il percoit l'observation $o_t$, choisit une action $a_t$. Cette action l'amène dans un état $s_{t+1}$ et il recoit la récompense $r_{t+1}$.
+
+Il s'agit, en Reinforcement Learning, de choisir, à partir d'un état initial, une série d'actions permettant d'obtenir une récompense cumulée maximale.
+
+Voyons quelques notions qui vont nous permettre de faire des calculs à partir des notions vues précédemment. On définit ainsi
+
+### Valeur d'un état
+
+- $V(s)$ : la valeur d'un état. Quelle récompense cumulée (ou similaire) peut attendre l'agent qui passe par un état $s$. Pour l'évaluer, on aura besoin de la suite :
+
+- $G_t$ : le **retour** : la **récompense cumulée** à partit du temps $t$. Elle s'ecrit comme suit : $G_t = R_{t+1} + R_{t+2} + R_{t+3} ...$ 
+
+On peut alors écrire $V(s)$ en fonction de $G_t$$ :
+il s'agit de l'esperance de $G_t$, sachant qu'on est dans l'état $s$
+$V(s) = E (G_t / S_t = s)$
+
+On peut écrire cette équation sous forme récursive :
+$V(s) = E (G_t / S_t = s) = E (R_{t+1} + R_{t+2} + R_{t+3} ... / S_t = s) = E (R_{t+1} + V(s_{t+1}) / S_t = s) $
+
+### La Qualité, ou Qvalue d'un couple $s,a$
+
+- $Q(s,a)$ : la qualité d'un couple $s,a$. Si l'agent est dans un état $s$, quelle récompense cumulée (ou similaire) attend il de l'action $a$.
+
+Comme précédement, on écrit :
+$Q(s,a) = E (G_t / S_t = s, A_t = a)$
+et récursivement
+$Q(s,a) = E (R_{t+1} + V(s_{t+1}) / S_t = s, A_t = a)$
+
+
+### l'historique de l'agent :
+on stocke tout ce que l'agent a toutes les informations que rencontré
+$H_t = \{o_0, a_0, r_1, o_1, a_1, r_2, ..., r_t, o_t\}$
+
+l'état de l'agent $s_t$ est bati sur $H_t$.
+
+Note pour plus tard : dans le cas ou le monde est completement observable, on peut se contenter de $s_t = o_t$...
+
+## Processus de Décision Markovien (MDP)
+
+**C'est assez peu clair...**
+C'est markovien si $p(r,s / s_t, a_t ) = p(r,s / H_t, a_t )
+Ca n'a pas l'air d'être le cas si l'environnement est seulement partiellement observable. ou alors, il faut construire un état à partir de l'historique intelligement...
+
+Si c'est markovien, on peut chercher une stratégie optimale.
+Mais sinon, on peut se contenter d'une bonne stratégie => on va s'intéresser
+à cette stratégie...
+
+### La politique de l'agent
+
+- $\pi$ : une politique. une fonction qui, en fonction de l'état, définit l'action à suivre. Dans un monde déterministe, on la note parfois $\mu$ et c'est une fonction $\mu(s) \rightarrow a$. Dans un monde stochastique, c'est une distribution de probabilité, qui à un état associe la probabilité de choisir chacune des actions possibles.
+
+$a = \pi(s)$ or $\pi(a/s) = p(a/s)$
+
+Lions tout ca ensemble et apportons quelques aménagements :
+1. La valeur d'un état dépend de la politique d'un agent. On écrira donc
+$V_{\pi}(s) = E(G_t/ S_t=s , \pi)$
+
+2. Introduction du **discount factor** $\gamma$ dans le **retour**
+$\gamma \in [0,1]$.
+Il représente l'intérêt d'une récompense à venir.
+
+Offre les avantages suivant
+- de résoudre le cas de séquences de tailles infinies $\G_t -> \inf$
+- établit un compromis entre récompense immédiate et récompenses futures mais potentielles.
+
+On parle alors de **Discounted Reward**
+$G_t = R_{t+1} + \gamma R_{t+2} + \gamma ^2 R_{t+3} ...$
+
+et on garde $V_{\pi}(s) = E(G_t/ S_t=s , \pi)$
+sauf que $G_t$ est le discounted reward.
+
+Comme précédement, on peut prendre sa forme récursive :
+$G_t = R_{t+1} + \gamma G_{t+1}$
+
+$V_{\pi}(s) = E (G_t / S_t = s, At ~ \pi(s))$
+Avec $a ~ \pi(s)$ qui signifie que $a$ est choisie par la politique $\pi$ dans l'état $s$ (influe sur les probabilités de choisir $a$)
+
+On a donc
+$V_{\pi}(s) = E (R_{t+1} + \gamma G_{t+1} / S_t = s, At ~ \pi(s))$
+
+Ce qui donne **l'équation de Bellmann** :
+$V_{\pi}(s) = E (R_{t+1} + \gamma V_{\pi}(s_{t+1}) / S_t = s, At ~ \pi(s))$
+
+Cette équation est valable aussi pour la politique optimale, qui donne le meilleur discounted return à chaque état :
+$V_{\*}(s) = max_a E (R_{t+1} + \gamma V_{\*}(s_{t+1}) / S_t = s, A_t = a)$
+
+### Apprentissage itératif
+
+L'idée est maintenant que
+1. on dispose d'une politique qui détermine un $V_{pi}(s)$
+2. Cette estimation des $V_\{pi}(s)$ permet de choisir des actions pour aller vers des états plus souhaitables.
+3. Ces actions vont sans doute permettre de mettre au point une nouvelle politique.
+
+ L'idée est ainsi de construire itérativement des politiques permettant
+ d'approcher $V_{\*}(s)$ (et donc $\pi_{\*}$), ou au moins, des **politiques relativement efficaces**.
+
+
+## Model
+
+Dans le cas ou l'on dispose d'un modèle, le modèle peut servir à prédire
+- l'état suivant : $p(S_{t+1}=s'/ S_t=s, A_t=a)$
+- la récompense immédiate suivante $R_{s,a} = E\[R_{t+1}/ S_t = s, A_t =a\]$
+
+Le modèle seul ne donne pas une bonne politique. Il faut prévoir une plannification 
+qui elle va optimiser le discounted reward.
+
+
+
 
 - $s_0$ : un état initial
 
 - $\tau$ : une trajectoire. une trajectoire est l'enregistrement de l'état initial, suivi de toutes les actions suivantes jusqu'à un état terminal. $\tau = \{s_0, a_1,a_2,... a_T\}$
-
-- $V(s)$ : la valeur d'un état. Quelle récompense cumulée (ou similaire) peut attendre l'agent qui passe par un état $s$.
-
-- $Q(s,a)$ : la qualité d'un couple $s,a$. Si l'agent est dans un état $s$, quelle récompense cumulée (ou similaire) attend il de l'action $a$.
-
-- $\pi$ : une politique. une fonction qui, en fonction de l'état, définit l'action à suivre. Dans un monde déterministe, on la note parfois $\mu$ et c'est une fonction $\mu(s) \rightarrow a$. Dans un monde stochastique, c'est une distribution de probabilité, qui à un état associe la probabilité de choisir chacune des actions possibles.
 
 ## Techniques
 
