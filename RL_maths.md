@@ -141,13 +141,16 @@ Commencons par les techniques adaptées aux **actions discrètes**
 
 ## Monte carlo learning :
 
+En RL, quand on parle de Monte Carlo Sampling, on parle d'echantilloner des **épisodes complets**.
+un épisode complet est l'ensemble ${(o_i,a_i,r_{i+1})}$, depuis l'état initial, jusqu'à la fin de l'experience (echouée ou réussie, le plus souvent).
+
 On cherche à estimer les valeurs $V(s)$. Ceci peut par exemple être fait à l'aide d'un réseau de neurones. Le même raisonnement s'applique si l'on souhaite estimer $Q(s,a)$.
 
 On initialise les $V(s)$ aléatoirement.
 On définit une trajectoire, et on compte la récompense cumulée sur la trajectoire,
 pour chaque instant de la trajectoire. Les récompenses antérieurs étant sans intérêt pour la valeur de V(s_t), cette récompense cumulée prend la forme suivante :
 
-$G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} ... + \gamma^{T-t-1} r_{T}$
+$G_t = r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} ... + \gamma^{T-t-1} r_{T}$
 
 On met à jour les valeurs des états $s_t$ avec la formule suivante, ou $\alpha$ est un taux d'apprentissage.
 $V(s_t) = V(s_t) + \alpha (G_t - V(s_t))$
@@ -160,14 +163,53 @@ va fournir les informations permettant la mise à jour des estimations (des vale
 Pour cela, on va auto estimer la fin de $G_t$. On le comprend en écrivant 
 $G_t = r + \gamma G_{t+1}$
 
-
 Si on suppose que V(s) fournit une estimation à peu près correcte de $G$,
 on peut écrire la **différence temporelle**
-$G_t = r_t + \gamma V(s_{t+1})$
+$G_t = r_{t+1} + \gamma V(s_{t+1})$
 
-Ceci fournira la base de SARSA et Qlearning
+On parle de **Bootstrapping** : Notre estimation à un instant est évaluée en utilisant cette estimation...
+
+$V(s_t) = V(s_t) + \alpha (r_{t+1} + \gamma V(s_{t+1}) - V(s_t))$
+
+La dedans :
+- $r_{t+1} + \gamma V(s_{t+1})$ est la valeur cible à atteindre par $V(s_t)$.
+- $r_{t+1} + \gamma V(s_{t+1}) - V(s_t)$ est l'erreur commise par notre estimateur.
+- on note parfois $\delta = r_{t+1} + \gamma V(s_{t+1}) - V(s_t)$
+
+Ceci fournira la base de SARSA et Qlearning (pas sur, il me semble avoir vu du Qlearning avec MC)
 
 on peut imaginer une différence temporelle à plus d'une itération (disons 3 ou 10...)
+
+### MC vs TD
+
+A noter :
+- MC doit attendre la fin de l'épisode pour apprendre
+- l'estimation de $V(s)$ est non biaisée avec MC. Elle peut être biaisée avec TD (pas super clair)
+- TD Boostrappe. Pas MC.
+- **L'estimation de $V$ a une plus grande variance avec MC**. (me semble un peu contre-intuitif)
+- MC propage l'information rapidement, TD la propage lentement : Si une récompense inattendue apparait, seul l'état précédent le sait. Mais du coup, les mise a jour de MC sont bruitées. (Me semble lié au précédent)
+- MC a semble-t-il besoin d'un $\alpha$ plus faible que TD
+- $\alpha$ doit décroitre avec le temps.
+
+### Mixed multi step
+
+au lieu de faire du TD (1-step), ou du MC ($\inf$-step), on peut envisager
+des TD à n-step. Mais on peut faire mieux : mixer les deux :
+
+On choisit un parametre $\lambda$, et on ecrit :
+$G^\lambda_t = r + \gamma (\lambda  G_{t+1} + (1-\lambda) V(s_{t+1}))$
+
+- si $\lambda = 0$, c'est TD
+- si $\lambda = 1$, c'est MC
+- pour une valeur $\lambda$, c'est a peu près $1/\lambda$-step TD. Avec $\lambda = 0.1$, on peut considérer qu'on fait à peu près du 10-steps TD. 
+
+Note importante : on peut aussi exprimer $G^\lambda_t$ comme ceci :
+$G^{\lambda}_t = \Sum_n=1^\inf (1-\lambda)\lambda^(n-1)G_t(n) $
+
+
+
+### Traces...
+A revoir.
 
 ### SARSA
 
