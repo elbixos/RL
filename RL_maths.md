@@ -22,7 +22,7 @@ lorsque l'agent, dans un état donnée choisit telle action qui le conduit dans 
 
 - $r$ : la récompense associée au passage d'un état à un autre par le biais d'une action. Il s'agit d'une récompense instantannée.
 
-Pour préciser la notation  temporelle de toute ces grandeurs : A l'instant $t$t, l'agent se situe dans un état $s_t$. Il percoit l'observation $o_t$, choisit une action $a_t$. Cette action l'amène dans un état $s_{t+1}$ et il recoit la récompense $r_{t+1}$.
+Pour préciser la notation  temporelle de toute ces grandeurs : A l'instant $t$, l'agent se situe dans un état $s_t$. Il percoit l'observation $o_t$, choisit une action $a_t$. Cette action l'amène dans un état $s_{t+1}$ et il recoit la récompense $r_{t+1}$.
 
 Il s'agit, en Reinforcement Learning, de choisir, à partir d'un état initial, une série d'actions permettant d'obtenir une récompense cumulée maximale.
 
@@ -34,21 +34,21 @@ Voyons quelques notions qui vont nous permettre de faire des calculs à partir d
 
 - $G_t$ : le **retour** : la **récompense cumulée** à partit du temps $t$. Elle s'ecrit comme suit : $G_t = R_{t+1} + R_{t+2} + R_{t+3} ...$ 
 
-On peut alors écrire $V(s)$ en fonction de $G_t$$ :
+On peut alors écrire $V(s)$ en fonction de $G_t$ :
 il s'agit de l'esperance de $G_t$, sachant qu'on est dans l'état $s$
-$V(s) = E (G_t / S_t = s)$
+$V(s) = E (G_t \| S_t = s)$
 
 On peut écrire cette équation sous forme récursive :
-$V(s) = E (G_t / S_t = s) = E (R_{t+1} + R_{t+2} + R_{t+3} ... / S_t = s) = E (R_{t+1} + V(s_{t+1}) / S_t = s) $
+$V(s) = E (G_t \| S_t = s) = E (R_{t+1} + R_{t+2} + R_{t+3} ... \| S_t = s) = E (R_{t+1} + V(s_{t+1}) \| S_t = s) $
 
 ### La Qualité, ou Qvalue d'un couple $s,a$
 
 - $Q(s,a)$ : la qualité d'un couple $s,a$. Si l'agent est dans un état $s$, quelle récompense cumulée (ou similaire) attend il de l'action $a$.
 
 Comme précédement, on écrit :
-$Q(s,a) = E (G_t / S_t = s, A_t = a)$
+$Q(s,a) = E (G_t \| S_t = s, A_t = a)$
 et récursivement
-$Q(s,a) = E (R_{t+1} + V(s_{t+1}) / S_t = s, A_t = a)$
+$Q(s,a) = E (R_{t+1} + V(s_{t+1}) \| S_t = s, A_t = a)$
 
 
 ### l'historique de l'agent :
@@ -62,7 +62,7 @@ Note pour plus tard : dans le cas ou le monde est completement observable, on pe
 ## Processus de Décision Markovien (MDP)
 
 **C'est assez peu clair...**
-C'est markovien si $p(r,s / s_t, a_t ) = p(r,s / H_t, a_t )
+C'est markovien si $p(r,s \| s_t, a_t ) = p(r,s \| H_t, a_t )$
 Ca n'a pas l'air d'être le cas si l'environnement est seulement partiellement observable. ou alors, il faut construire un état à partir de l'historique intelligement...
 
 Si c'est markovien, on peut chercher une stratégie optimale.
@@ -73,46 +73,46 @@ Mais sinon, on peut se contenter d'une bonne stratégie => on va s'intéresser
 
 - $\pi$ : une politique. une fonction qui, en fonction de l'état, définit l'action à suivre. Dans un monde déterministe, on la note parfois $\mu$ et c'est une fonction $\mu(s) \rightarrow a$. Dans un monde stochastique, c'est une distribution de probabilité, qui à un état associe la probabilité de choisir chacune des actions possibles.
 
-$a = \pi(s)$ or $\pi(a/s) = p(a/s)$
+$a = \pi(s)$ ou $\pi(a\|s) = p(a\|s)$
 
 Lions tout ca ensemble et apportons quelques aménagements :
 1. La valeur d'un état dépend de la politique d'un agent. On écrira donc
-$V_{\pi}(s) = E(G_t/ S_t=s , \pi)$
+$V_{\pi}(s) = E(G_t \| S_t=s , \pi)$
 
 2. Introduction du **discount factor** $\gamma$ dans le **retour**
 $\gamma \in [0,1]$.
 Il représente l'intérêt d'une récompense à venir.
 
 Offre les avantages suivant
-- de résoudre le cas de séquences de tailles infinies $\G_t -> \inf$
+- de résoudre le cas de séquences de tailles infinies (dans ce cas, sans discount, $\G_t \rightarrow \infty$)
 - établit un compromis entre récompense immédiate et récompenses futures mais potentielles.
 
 On parle alors de **Discounted Reward**
 $G_t = R_{t+1} + \gamma R_{t+2} + \gamma ^2 R_{t+3} ...$
 
-et on garde $V_{\pi}(s) = E(G_t/ S_t=s , \pi)$
+et on garde $V_{\pi}(s) = E(G_t \| S_t=s , \pi)$
 sauf que $G_t$ est le discounted reward.
 
 Comme précédement, on peut prendre sa forme récursive :
 $G_t = R_{t+1} + \gamma G_{t+1}$
 
-$V_{\pi}(s) = E (G_t / S_t = s, At ~ \pi(s))$
-Avec $a ~ \pi(s)$ qui signifie que $a$ est choisie par la politique $\pi$ dans l'état $s$ (influe sur les probabilités de choisir $a$)
+$V_{\pi}(s) = E (G_t \| S_t = s, At \sim \pi(s))$
+Avec $a \sim \pi(s)$ qui signifie que $a$ est choisie par la politique $\pi$ dans l'état $s$ (influe sur les probabilités de choisir $a$)
 
 On a donc
-$V_{\pi}(s) = E (R_{t+1} + \gamma G_{t+1} / S_t = s, At ~ \pi(s))$
+$V_{\pi}(s) = E (R_{t+1} + \gamma G_{t+1} \| S_t = s, At \sim \pi(s))$
 
 Ce qui donne **l'équation de Bellmann** :
-$V_{\pi}(s) = E (R_{t+1} + \gamma V_{\pi}(s_{t+1}) / S_t = s, At ~ \pi(s))$
+$V_{\pi}(s) = E (R_{t+1} + \gamma V_{\pi}(s_{t+1}) \| S_t = s, At ~ \pi(s))$
 
-Cette équation est valable aussi pour la politique optimale, qui donne le meilleur discounted return à chaque état :
-$V_{\*}(s) = max_a E (R_{t+1} + \gamma V_{\*}(s_{t+1}) / S_t = s, A_t = a)$
+Cette équation est valable aussi pour les valeurs mesurées par la politique optimale, qui donne le meilleur discounted return à chaque état :
+$V_{\*}(s) = max_a E (R_{t+1} + \gamma V_{\*}(s_{t+1}) \| S_t = s, A_t = a)$
 
 ### Apprentissage itératif
 
 L'idée est maintenant que
-1. on dispose d'une politique qui détermine un $V_{pi}(s)$
-2. Cette estimation des $V_\{pi}(s)$ permet de choisir des actions pour aller vers des états plus souhaitables.
+1. on dispose d'une politique qui détermine un $V_{\pi}(s)$
+2. Cette estimation des $V_\{\pi}(s)$ permet de choisir des actions pour aller vers des états plus souhaitables.
 3. Ces actions vont sans doute permettre de mettre au point une nouvelle politique.
 
  L'idée est ainsi de construire itérativement des politiques permettant
@@ -122,18 +122,11 @@ L'idée est maintenant que
 ## Model
 
 Dans le cas ou l'on dispose d'un modèle, le modèle peut servir à prédire
-- l'état suivant : $p(S_{t+1}=s'/ S_t=s, A_t=a)$
-- la récompense immédiate suivante $R_{s,a} = E\[R_{t+1}/ S_t = s, A_t =a\]$
+- l'état suivant : $p(S_{t+1}=s' \| S_t=s, A_t=a)$
+- la récompense immédiate suivante $R_{s,a} = E\[R_{t+1} \| S_t = s, A_t =a\]$
 
 Le modèle seul ne donne pas une bonne politique. Il faut prévoir une plannification 
 qui elle va optimiser le discounted reward.
-
-
-
-
-- $s_0$ : un état initial
-
-- $\tau$ : une trajectoire. une trajectoire est l'enregistrement de l'état initial, suivi de toutes les actions suivantes jusqu'à un état terminal. $\tau = \{s_0, a_1,a_2,... a_T\}$
 
 ## Techniques
 
@@ -148,7 +141,7 @@ On cherche à estimer les valeurs $V(s)$. Ceci peut par exemple être fait à l'
 
 On initialise les $V(s)$ aléatoirement.
 On définit une trajectoire, et on compte la récompense cumulée sur la trajectoire,
-pour chaque instant de la trajectoire. Les récompenses antérieurs étant sans intérêt pour la valeur de V(s_t), cette récompense cumulée prend la forme suivante :
+pour chaque instant de la trajectoire. Les récompenses antérieures étant sans intérêt pour la valeur de $V(s_t)$, cette récompense cumulée prend la forme suivante :
 
 $G_t = r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} ... + \gamma^{T-t-1} r_{T}$
 
@@ -172,13 +165,14 @@ On parle de **Bootstrapping** : Notre estimation à un instant est évaluée en 
 $V(s_t) = V(s_t) + \alpha (r_{t+1} + \gamma V(s_{t+1}) - V(s_t))$
 
 La dedans :
+- $V(s_t)$ est la prédiction faite par notre estimateur.
 - $r_{t+1} + \gamma V(s_{t+1})$ est la valeur cible à atteindre par $V(s_t)$.
 - $r_{t+1} + \gamma V(s_{t+1}) - V(s_t)$ est l'erreur commise par notre estimateur.
-- on note parfois $\delta = r_{t+1} + \gamma V(s_{t+1}) - V(s_t)$
+- on note parfois $\delta_t = r_{t+1} + \gamma V(s_{t+1}) - V(s_t)$, l'erreur commise par notre estimateur
 
-Ceci fournira la base de SARSA et Qlearning (pas sur, il me semble avoir vu du Qlearning avec MC)
+Ceci fournira la base de SARSA et Qlearning (pas sûr, il me semble avoir vu du Qlearning avec MC)
 
-on peut imaginer une différence temporelle à plus d'une itération (disons 3 ou 10...)
+On le verra plus loin, mais on peut imaginer une différence temporelle à plus d'une itération (disons 3 ou 10...)
 
 ### MC vs TD
 
@@ -193,7 +187,7 @@ A noter :
 
 ### Mixed multi step
 
-au lieu de faire du TD (1-step), ou du MC ($\inf$-step), on peut envisager
+au lieu de faire du TD (1-step), ou du MC ($\infty$-step), on peut envisager
 des TD à n-step. Mais on peut faire mieux : mixer les deux :
 
 On choisit un parametre $\lambda$, et on ecrit :
@@ -204,7 +198,7 @@ $G^\lambda_t = r + \gamma (\lambda  G_{t+1} + (1-\lambda) V(s_{t+1}))$
 - pour une valeur $\lambda$, c'est a peu près $1/\lambda$-step TD. Avec $\lambda = 0.1$, on peut considérer qu'on fait à peu près du 10-steps TD. 
 
 Note importante : on peut aussi exprimer $G^\lambda_t$ comme ceci :
-$G^{\lambda}_t = \Sum_n=1^\inf (1-\lambda)\lambda^(n-1)G_t(n) $
+$G^{\lambda}_t = \sum_{n=1}^{\infty} (1-\lambda)\lambda^(n-1)G_t(n) $
 
 
 
