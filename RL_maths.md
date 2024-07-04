@@ -84,7 +84,7 @@ $\gamma \in [0,1]$.
 Il représente l'intérêt d'une récompense à venir.
 
 Offre les avantages suivant
-- de résoudre le cas de séquences de tailles infinies (dans ce cas, sans discount, $\G_t \rightarrow \infty$)
+- de résoudre le cas de séquences de tailles infinies (dans ce cas, sans discount, $G_t \rightarrow \infty$)
 - établit un compromis entre récompense immédiate et récompenses futures mais potentielles.
 
 On parle alors de **Discounted Reward**
@@ -103,10 +103,17 @@ On a donc
 $V_{\pi}(s) = E (R_{t+1} + \gamma G_{t+1} \| S_t = s, At \sim \pi(s))$
 
 Ce qui donne **l'équation de Bellmann** :
-$V_{\pi}(s) = E (R_{t+1} + \gamma V_{\pi}(s_{t+1}) \| S_t = s, At ~ \pi(s))$
+$V_{\pi}(s) = E (R_{t+1} + \gamma V_{\pi}(s_{t+1}) \| S_t = s, At \sim \pi(s))$
 
 Cette équation est valable aussi pour les valeurs mesurées par la politique optimale, qui donne le meilleur discounted return à chaque état :
 $V_{\*}(s) = max_a E (R_{t+1} + \gamma V_{\*}(s_{t+1}) \| S_t = s, A_t = a)$
+
+On peut également écrire l'équation de Bellmann pour la Q_value :
+$Q_{\pi}(s,a) = E (R_{t+1} + \gamma Q_{\pi}(s_{t+1},A_{t+1}) \| S_t = s, At = a)$
+
+et sa version pour la Q_value optimale.
+$Q_{\*}(s,a) = E (R_{t+1} + \gamma max_a' Q_{\*}(s_{t+1,a}) \| S_t = s, At = a)$
+
 
 ### Apprentissage itératif
 
